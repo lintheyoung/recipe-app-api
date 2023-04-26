@@ -1,0 +1,22 @@
+# 指定docker-compose文件的版本
+version: '3.9'
+
+# 定义服务列表
+services:
+  # 定义名为app的服务
+  app:
+    # 构建服务所需的Docker镜像
+    build:
+      # 设置构建上下文（即Dockerfile所在目录）
+      context: . 
+      args:
+        - DEV=true
+    # 将容器的8000端口映射到主机的8000端口
+    ports:
+      - "8000:8000"
+    # 将主机上的./app文件夹挂载到容器的/app文件夹
+    volumes:
+      - ./app:/app
+    # 定义在容器启动时执行的命令
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
