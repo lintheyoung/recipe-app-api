@@ -5,6 +5,7 @@ from django.core.management import call_command
 from django.db.utils import OperationalError
 from django.test import SimpleTestCase
 
+
 # 使用patch装饰器模拟core.management.commands.wait_for_db.Command.check方法
 @patch('core.management.commands.wait_for_db.Command.check')
 class CommandTests(SimpleTestCase):
@@ -36,4 +37,4 @@ class CommandTests(SimpleTestCase):
         self.assertEqual(patched_check.call_count, 6)
 
         # 断言最后一次调用patched_check方法时参数为database=['default']
-        patched_check.assert_called_once_with(databases=['default'])
+        patched_check.assert_called_with(databases=['default'])
