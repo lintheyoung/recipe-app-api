@@ -19,7 +19,10 @@ services:
       - ./app:/app
     # 定义在容器启动时执行的命令
     command: >                                                 
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py wait_for_db && 
+             python manage.py migrate && 
+             python manage.py runserver 0.0.0.0:8000"
+             
     environment:
       - DB_HOST=db
       - DB_NAME=devdb
