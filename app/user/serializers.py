@@ -29,9 +29,11 @@ class UserSerializer(serializers.ModelSerializer):
         """Update a user, setting the password correctly and return it."""
         # Remove password from the validated data, since we don't want to
         # update the password with this method.
+        # 不存在就返回None
         password = validated_data.pop('password', None)
         # Call the update method of the ModelSerializer
         # https://www.django-rest-framework.org/api-guide/serializers/#modelserializer
+        # instance是指要更新的模型实例，validated_data是指要更新的数据
         user = super().update(instance, validated_data)
 
         if password:
