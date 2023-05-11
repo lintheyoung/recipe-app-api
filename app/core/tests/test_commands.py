@@ -1,6 +1,6 @@
 # 导入需要的模块和类
 from unittest.mock import patch
-from psycopg2 import OperationalError as Psycopg2Error
+from psycopg2 import OperationalError as Psycopg2OpError
 from django.core.management import call_command
 from django.db.utils import OperationalError
 from django.test import SimpleTestCase
@@ -27,7 +27,7 @@ class CommandTests(SimpleTestCase):
     def test_wait_for_db_delay(self, patched_sleep, patched_check):
         """Test waiting for database when getting OperationError."""
         # 设置patched_check的side_effect属性，依次抛出两个Psycopg2Error异常、三个OperationalError异常，最后返回True
-        patched_check.side_effect = [Psycopg2Error] * 2 + \
+        patched_check.side_effect = [Psycopg2OpError] * 2 + \
             [OperationalError] * 3 + [True]
 
         # 调用wait_for_db命令
