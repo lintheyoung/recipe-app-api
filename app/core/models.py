@@ -1,6 +1,7 @@
 """
 Database models.
 """
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -40,3 +41,18 @@ class User(AbstractBaseUser, PermissionsMixin): # 定义 User 类，继承 Abstr
     objects = UserManager() # 定义 objects 属性，值为 UserManager 类的实例
 
     USERNAME_FIELD = 'email' # 定义 USERNAME_FIELD 属性，值为 'email'
+
+class Recipe(models.Model):
+    """Recipe object."""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, # 定义 user 字段，类型为 ForeignKey，值为 settings.AUTH_USER_MODEL
+        on_delete=models.CASCADE, # 定义 on_delete 属性，值为 models.CASCADE，在删除这个人的时候，也顺便一起删除
+    )
+    title = models.CharField(max_length=255) # 定义 title 字段，类型为 CharField，最大长度为 255
+    description = models.TextField(blank=True) # 定义 description 字段，类型为 TextField
+    time_minutes = models.IntegerField() # 定义 time_minutes 字段，类型为 IntegerField
+    price = models.DecimalField(max_digits=5, decimal_places=2) # 定义 price 字段，类型为 DecimalField
+    link = models.CharField(max_length=255, blank=True) # 定义 link 字段，类型为 CharField，最大长度为 255
+
+    def __str__(self):
+        return self.title # 返回 title 字段的值

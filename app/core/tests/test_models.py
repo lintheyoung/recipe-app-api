@@ -1,6 +1,7 @@
+from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-
+from core import models
 
 class ModelTests(TestCase):
     """Test models."""
@@ -44,3 +45,20 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)  # 断言用户是否是超级用户
         self.assertTrue(user.is_staff)  # 断言用户是否是员工
+
+    def test_create_recipe(self):
+        """Test creating a new recipe is successful."""
+        user = get_user_model().objects.create_user(
+            'test@example.com',
+            'testpass123'
+        )
+
+        recipe = models.Recipe.objects.create(
+            user=user,
+            title = 'Sample recipe name',
+            time_minutes = 5,
+            price = Decimal('10.00'),
+            description = 'Sample recipe description',
+        )
+
+        self.assertEqual(str(recipe), recipe.title)  # 断言 recipe 的字符串是否是 recipe 的 title))
