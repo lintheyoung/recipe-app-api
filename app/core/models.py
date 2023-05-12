@@ -53,6 +53,18 @@ class Recipe(models.Model):
     time_minutes = models.IntegerField() # 定义 time_minutes 字段，类型为 IntegerField
     price = models.DecimalField(max_digits=5, decimal_places=2) # 定义 price 字段，类型为 DecimalField
     link = models.CharField(max_length=255, blank=True) # 定义 link 字段，类型为 CharField，最大长度为 255
+    tags = models.ManyToManyField('Tag')
 
     def __str__(self):
         return self.title # 返回 title 字段的值
+    
+class Tag(models.Model):
+    """Tag for filtering recipes."""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name

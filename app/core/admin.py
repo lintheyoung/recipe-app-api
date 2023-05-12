@@ -40,3 +40,4 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(models.User, UserAdmin) # 注册User模型和UserAdmin类到admin页面
 admin.site.register(models.Recipe) # 注册Recipe模型到admin页面
+admin.site.register(models.Tag)
