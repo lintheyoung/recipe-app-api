@@ -8,7 +8,6 @@ from core.models import (
     Tag,
 )
 
-
 class TagSerializer(serializers.ModelSerializer):
     """Serializer for tags."""
 
@@ -24,8 +23,23 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ['id', 'title', 'time_minutes', 'price', 'link', 'tags']
+        fields = ['id', 'title', 'time_minutes', 'price', 'link']
         read_only_fields = ['id']
+
+    def create(self, validated_data):
+        tags = validated_data.pop('tags', [])
+        recipe = Recipe.objects.create(**validated_data)
+        auth_user = self.context['request'].user
+        for tag in tags:
+            tag_obj, created = Tag.objects.get_or_create(
+                user = auth_user,
+                **tag,
+            )
+            recipe.tags.add(tag_obj)
+
+        return recipe
+
+
 
 
 class RecipeDetailSerializer(RecipeSerializer):
@@ -34,16 +48,3 @@ class RecipeDetailSerializer(RecipeSerializer):
     class Meta(RecipeSerializer.Meta):
         fields = RecipeSerializer.Meta.fields + ['description']
 
-    def create(self, validated_data):
-        """Create a recipe."""
-        tags = validated_data.pop('tags', [])
-        recipe = Recipe.objects.create(**validated_data)
-        auth_user = self.context['request'].user
-        for tag in tags:
-            tag_obj, created = Tag.objects.get_or_create(
-                user=auth_user,
-                **tag,
-            )
-            recipe.tags.add(tag_obj)
-
-        return recipe
