@@ -22,7 +22,7 @@ class PublicUserApiTests(TestCase):
         self.client = APIClient()
 
     # 函数的作用是测试创建一个有效的用户是否成功
-    def test_create_valid_user_success(self):
+    def test_create_user_success(self):
         """Test creating user with valid payload is successful"""
         payload = {
             'email': 'test@londonappdev.com',
@@ -32,12 +32,12 @@ class PublicUserApiTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        user = get_user_model().objects.get(**res.data)
+        user = get_user_model().objects.get(email=payload['email'])
         self.assertTrue(user.check_password(payload['password']))
         self.assertNotIn('password', res.data)
 
     # 函数的作用是测试创建一个已经存在的用户是否成功
-    def test_user_exists(self):
+    def test_user_with_email_exists_error(self):
         """Test creatinga  user that already exists fails"""
         payload = {
             'email': 'test@londonappdev.com',
@@ -51,7 +51,7 @@ class PublicUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     # 函数的作用是测试创建一个密码长度不够的用户是否成功
-    def test_password_too_short(self):
+    def test_password_too_short_error(self):
         """Test that the password must be more than 5 characters"""
         payload = {
             'email': 'test@londonappdev.com',
