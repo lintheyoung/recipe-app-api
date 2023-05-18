@@ -1,6 +1,8 @@
 """
 Database models.
 """
+import uuid
+import os
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
@@ -8,6 +10,13 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
+
+def recipe_image_file_path(instance, filename):
+    """Generate file path for new recipe image."""
+    ext = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}{ext}'
+
+    return os.path.join('uploads', 'recipe', filename)
 
 class UserManager(BaseUserManager): # 定义 UserManager 类，继承 BaseUserManager 类
     """Manager for users."""
@@ -54,12 +63,26 @@ class Recipe(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2) # 定义 price 字段，类型为 DecimalField
     link = models.CharField(max_length=255, blank=True) # 定义 link 字段，类型为 CharField，最大长度为 255
     tags = models.ManyToManyField('Tag')
+    ingredients = models.ManyToManyField('Ingredient')
+
+    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
 
     def __str__(self):
         return self.title # 返回 title 字段的值
     
 class Tag(models.Model):
     """Tag for filtering recipes."""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
+    
+class Ingredient(models.Model):
+    """Ingredient for recipes."""
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

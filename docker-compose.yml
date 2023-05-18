@@ -16,6 +16,7 @@ services:
     # 将主机上的./app文件夹挂载到容器的/app文件夹
     volumes:
       - ./app:/app
+      - ./data/web:/vol/web
     # 定义在容器启动时执行的命令
     command: >                                                 
       sh -c "python manage.py wait_for_db && 
